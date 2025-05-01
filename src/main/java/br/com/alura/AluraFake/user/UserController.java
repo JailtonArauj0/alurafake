@@ -34,6 +34,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ErrorItemDTO("email", "Email já cadastrado no sistema"));
         }
+        newUser.setPassword(new BCryptPasswordEncoder().encode(newUser.getPassword()));
         User user = newUser.toModel();
         userRepository.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).build();
