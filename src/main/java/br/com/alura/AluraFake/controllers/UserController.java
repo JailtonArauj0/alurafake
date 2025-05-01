@@ -1,52 +1,50 @@
 package br.com.alura.AluraFake.controllers;
 
 import br.com.alura.AluraFake.dtos.request.LoginRequestDTO;
-import br.com.alura.AluraFake.dtos.response.LoginResponseDTO;
-import br.com.alura.AluraFake.repositories.UserRepository;
-import br.com.alura.AluraFake.security.TokenService;
 import br.com.alura.AluraFake.dtos.request.NewUserDTO;
-import br.com.alura.AluraFake.user.User;
+import br.com.alura.AluraFake.dtos.response.LoginResponseDTO;
 import br.com.alura.AluraFake.dtos.response.UserListItemDTO;
-import br.com.alura.AluraFake.util.ErrorItemDTO;
+import br.com.alura.AluraFake.security.TokenService;
+import br.com.alura.AluraFake.services.UserService;
+import br.com.alura.AluraFake.user.User;
 import jakarta.validation.Valid;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
 public class UserController {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
 
-    public UserController(UserRepository userRepository, AuthenticationManager authenticationManager, TokenService tokenService) {
-        this.userRepository = userRepository;
+    public UserController(UserService userService, AuthenticationManager authenticationManager, TokenService tokenService) {
+        this.userService = userService;
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
     }
 
+
     @Transactional
     @PostMapping("/user/new")
-    public ResponseEntity newStudent(@RequestBody @Valid NewUserDTO newUser) {
-        if(userRepository.existsByEmail(newUser.getEmail())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ErrorItemDTO("email", "Email já cadastrado no sistema"));
-        }
-        newUser.setPassword(new BCryptPasswordEncoder().encode(newUser.getPassword()));
-        User user = newUser.toModel();
-        userRepository.save(user);
+    public ResponseEntity newUser(@RequestBody @Valid NewUserDTO newUser) {
+        userService.saveUser(newUser);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/user/all")
-    public List<UserListItemDTO> listAllUsers() {
-        return userRepository.findAll().stream().map(UserListItemDTO::new).toList();
+    public ResponseEntity<List<UserListItemDTO>> listAllUsers() {
+        List<UserListItemDTO> userList = userService.listAllUsers();
+        return ResponseEntity.ok(userList);
     }
 
     @PostMapping("/user/login")
