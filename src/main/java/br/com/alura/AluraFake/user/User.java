@@ -23,6 +23,7 @@ public class User implements UserDetails {
     private Role role;
     private String email;
     // Por questões didáticas, a senha será armazenada em texto plano.
+    // Modifiquei a lógica de geração de senha anterior, para fazer sentido a autenticação e autorização
     private String password;
 
     @Deprecated
