@@ -1,4 +1,4 @@
-package br.com.alura.AluraFake.dtos;
+package br.com.alura.AluraFake.dtos.response;
 
 import java.util.Objects;
 

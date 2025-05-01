@@ -1,8 +1,12 @@
-package br.com.alura.AluraFake.user;
+package br.com.alura.AluraFake.controllers;
 
-import br.com.alura.AluraFake.dtos.LoginRequestDTO;
-import br.com.alura.AluraFake.dtos.LoginResponseDTO;
+import br.com.alura.AluraFake.dtos.request.LoginRequestDTO;
+import br.com.alura.AluraFake.dtos.response.LoginResponseDTO;
+import br.com.alura.AluraFake.repositories.UserRepository;
 import br.com.alura.AluraFake.security.TokenService;
+import br.com.alura.AluraFake.dtos.request.NewUserDTO;
+import br.com.alura.AluraFake.user.User;
+import br.com.alura.AluraFake.dtos.response.UserListItemDTO;
 import br.com.alura.AluraFake.util.ErrorItemDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.*;

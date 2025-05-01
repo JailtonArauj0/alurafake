@@ -1,4 +1,4 @@
-package br.com.alura.AluraFake.dtos;
+package br.com.alura.AluraFake.dtos.request;
 
 import jakarta.validation.constraints.NotBlank;
 
