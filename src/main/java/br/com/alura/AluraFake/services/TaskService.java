@@ -28,28 +28,7 @@ public class TaskService {
         this.choiceRepository = choiceRepository;
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public void saveOpenText(OpenTextDTO openTextDTO) {
-        taskRepository.findTaskByStatement(openTextDTO.getStatement())
-                .ifPresent(task -> {
-                    throw new CustomException("Task with this statement already exists");
-                });
-
-        courseRepository.findById(openTextDTO.getCourseId())
-                .ifPresentOrElse(course -> {
-                    if(!course.getStatus().name().equals("BUILDING")) {
-                        throw new CustomException("Course is not in BUILDING status");
-                    }
-                    validateOrder(course, openTextDTO.getOrder());
-                    taskRepository.save(openTextDTO.toEntity(course, Type.OPEN_TEXT));
-                },
-                    () -> {
-                        throw new CustomException("Course not found");
-                    }
-                );
-    }
-
-    private void validateOrder(Course course, Integer order) {
+    private void validateAndSaveOrder(Course course, Integer order) {
         List<Task> existingTasks = taskRepository.findAllByCourseIdOrderByTaskOrder(course);
         if (order > existingTasks.size() + 1) {
             throw new CustomException("Invalid order: sequence is not continuous");
@@ -62,6 +41,27 @@ public class TaskService {
         }
 
         taskRepository.saveAll(existingTasks);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void saveOpenText(OpenTextDTO openTextDTO) {
+        taskRepository.findTaskByStatement(openTextDTO.getStatement())
+                .ifPresent(task -> {
+                    throw new CustomException("Task with this statement already exists");
+                });
+
+        courseRepository.findById(openTextDTO.getCourseId())
+                .ifPresentOrElse(course -> {
+                            if (!course.getStatus().name().equals("BUILDING")) {
+                                throw new CustomException("Course is not in BUILDING status");
+                            }
+                            validateAndSaveOrder(course, openTextDTO.getOrder());
+                            taskRepository.save(openTextDTO.toEntity(course, Type.OPEN_TEXT));
+                        },
+                        () -> {
+                            throw new CustomException("Course not found");
+                        }
+                );
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -97,7 +97,7 @@ public class TaskService {
                     if(!course.getStatus().name().equals("BUILDING")) {
                         throw new CustomException("Course is not in BUILDING status");
                     }
-                    validateOrder(course, choiceDTO.getOrder());
+                    validateAndSaveOrder(course, choiceDTO.getOrder());
                     Task savedTask = taskRepository.save(choiceDTO.toEntity(course, Type.SINGLE_CHOICE));
 
                     var choices = options.stream().map(option -> option.toEntity(savedTask)).toList();
@@ -143,7 +143,7 @@ public class TaskService {
                     if(!course.getStatus().name().equals("BUILDING")) {
                         throw new CustomException("Course is not in BUILDING status");
                     }
-                    validateOrder(course, choiceDTO.getOrder());
+                    validateAndSaveOrder(course, choiceDTO.getOrder());
                     Task savedTask = taskRepository.save(choiceDTO.toEntity(course, Type.MULTIPLE_CHOICE));
 
                     var choices = options.stream().map(option -> option.toEntity(savedTask)).toList();
