@@ -78,7 +78,6 @@ public class TaskService {
 
         for (int i = 0; i < options.size(); i++) {
             String actualOption = options.get(i).getOption();
-            Boolean assertion = options.get(i).isCorrect();
 
             if (options.stream().filter(option -> option.getOption().equals(actualOption)).count() > 1) {
                 throw new CustomException("Duplicate options are not allowed");
@@ -120,7 +119,6 @@ public class TaskService {
 
         for (int i = 0; i < options.size(); i++) {
             String actualOption = options.get(i).getOption();
-            Boolean assertion = options.get(i).isCorrect();
 
             if (options.stream().filter(option -> option.getOption().equals(actualOption)).count() > 1) {
                 throw new CustomException("Duplicate options are not allowed");
