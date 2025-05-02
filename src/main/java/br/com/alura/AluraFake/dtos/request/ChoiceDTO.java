@@ -1,5 +1,8 @@
 package br.com.alura.AluraFake.dtos.request;
 
+import br.com.alura.AluraFake.course.Course;
+import br.com.alura.AluraFake.task.Task;
+import br.com.alura.AluraFake.task.Type;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -33,6 +36,10 @@ public class ChoiceDTO {
         this.statement = statement;
         this.order = order;
         this.options = options;
+    }
+
+    public Task toEntity(Course course, Type taskType) {
+        return new Task(course, this.statement, this.order, taskType);
     }
 
     public Long getCourseId() {
