@@ -78,6 +78,9 @@ public class TaskService {
             if (options.stream().filter(option -> option.isCorrect().equals(Boolean.TRUE)).count() > 1) {
                 throw new CustomException("Duplicate correct answers are not allowed");
             }
+            if (options.stream().anyMatch(option -> option.getOption().equals(choiceDTO.getStatement()))) {
+                throw new CustomException("The option cannot be the same as the statement");
+            }
         }
 
 
