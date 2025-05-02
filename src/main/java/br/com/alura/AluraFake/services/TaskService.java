@@ -43,12 +43,16 @@ public class TaskService {
         taskRepository.saveAll(existingTasks);
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public void saveOpenText(OpenTextDTO openTextDTO) {
-        taskRepository.findTaskByStatement(openTextDTO.getStatement())
+    private void validateStatement(String statement) {
+        taskRepository.findTaskByStatement(statement)
                 .ifPresent(task -> {
                     throw new CustomException("Task with this statement already exists");
                 });
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void saveOpenText(OpenTextDTO openTextDTO) {
+        validateStatement(openTextDTO.getStatement());
 
         courseRepository.findById(openTextDTO.getCourseId())
                 .ifPresentOrElse(course -> {
@@ -87,10 +91,7 @@ public class TaskService {
             }
         }
 
-        taskRepository.findTaskByStatement(choiceDTO.getStatement())
-                .ifPresent(task -> {
-                    throw new CustomException("Task with this statement already exists");
-                });
+        validateStatement(choiceDTO.getStatement());
 
         courseRepository.findById(choiceDTO.getCourseId())
                 .ifPresentOrElse(course -> {
@@ -133,10 +134,7 @@ public class TaskService {
             }
         }
 
-        taskRepository.findTaskByStatement(choiceDTO.getStatement())
-                .ifPresent(task -> {
-                    throw new CustomException("Task with this statement already exists");
-                });
+        validateStatement(choiceDTO.getStatement());
 
         courseRepository.findById(choiceDTO.getCourseId())
                 .ifPresentOrElse(course -> {
