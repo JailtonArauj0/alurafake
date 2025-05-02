@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class Option {
     @NotNull
-    @Size(min = 4, max = 255, message = "Option must be between 4 and 80 characters")
+    @Size(min = 4, max = 80, message = "Option must be between 4 and 80 characters")
     private String option;
 
     @NotNull
