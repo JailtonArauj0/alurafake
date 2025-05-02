@@ -5,6 +5,7 @@ import br.com.alura.AluraFake.dtos.request.ChoiceDTO;
 import br.com.alura.AluraFake.dtos.request.OpenTextDTO;
 import br.com.alura.AluraFake.dtos.request.Option;
 import br.com.alura.AluraFake.exception.CustomException;
+import br.com.alura.AluraFake.repositories.ChoiceRepository;
 import br.com.alura.AluraFake.repositories.CourseRepository;
 import br.com.alura.AluraFake.repositories.TaskRepository;
 import br.com.alura.AluraFake.task.Task;
@@ -19,10 +20,12 @@ import java.util.List;
 public class TaskService {
     private final TaskRepository taskRepository;
     private final CourseRepository courseRepository;
+    private final ChoiceRepository choiceRepository;
 
-    public TaskService(TaskRepository taskRepository, CourseRepository courseRepository) {
+    public TaskService(TaskRepository taskRepository, CourseRepository courseRepository, ChoiceRepository choiceRepository) {
         this.taskRepository = taskRepository;
         this.courseRepository = courseRepository;
+        this.choiceRepository = choiceRepository;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -61,6 +64,7 @@ public class TaskService {
         taskRepository.saveAll(existingTasks);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void saveSingleChoice(@Valid ChoiceDTO choiceDTO) {
         List<Option> options = choiceDTO.getOptions();
 
@@ -83,24 +87,25 @@ public class TaskService {
             }
         }
 
+        taskRepository.findTaskByStatement(choiceDTO.getStatement())
+                .ifPresent(task -> {
+                    throw new CustomException("Task with this statement already exists");
+                });
 
-//        taskRepository.findTaskByStatement(choiceDTO.getStatement())
-//                .ifPresent(task -> {
-//                    throw new CustomException("Task with this statement already exists");
-//                });
-//
-//        courseRepository.findById(choiceDTO.getCourseId())
-//                .ifPresentOrElse(course -> {
-//                    if(!course.getStatus().name().equals("BUILDING")) {
-//                        throw new CustomException("Course is not in BUILDING status");
-//                    }
-//                    validateOrder(course, choiceDTO.getOrder());
-//                    taskRepository.save(choiceDTO.toEntity(course, Type.SINGLE_CHOICE));
-//                },
-//                    () -> {
-//                        throw new CustomException("Course not found");
-//                    }
-//                );
+        courseRepository.findById(choiceDTO.getCourseId())
+                .ifPresentOrElse(course -> {
+                    if(!course.getStatus().name().equals("BUILDING")) {
+                        throw new CustomException("Course is not in BUILDING status");
+                    }
+                    validateOrder(course, choiceDTO.getOrder());
+                    Task savedTask = taskRepository.save(choiceDTO.toEntity(course, Type.SINGLE_CHOICE));
 
+                    var choices = options.stream().map(option -> option.toEntity(savedTask)).toList();
+                    choiceRepository.saveAll(choices);
+                },
+                    () -> {
+                        throw new CustomException("Course not found");
+                    }
+                );
     }
 }
