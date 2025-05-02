@@ -63,13 +63,19 @@ public class TaskService {
 
     public void saveSingleChoice(@Valid ChoiceDTO choiceDTO) {
         List<Option> options = choiceDTO.getOptions();
+
+        if( options.size() < 2 || options.size() > 5) {
+            throw new CustomException("The number of options must be between 2 and 5");
+        }
+
         for (int i = 0; i < options.size(); i++) {
             String actualOption = options.get(i).getOption();
             Boolean assertion = options.get(i).isCorrect();
+
             if (options.stream().filter(option -> option.getOption().equals(actualOption)).count() > 1) {
                 throw new CustomException("Duplicate options are not allowed");
             }
-            if (options.stream().filter(option -> option.isCorrect().equals(assertion)).count() > 1) {
+            if (options.stream().filter(option -> option.isCorrect().equals(Boolean.TRUE)).count() > 1) {
                 throw new CustomException("Duplicate correct answers are not allowed");
             }
         }
