@@ -1,5 +1,7 @@
 package br.com.alura.AluraFake.dtos.request;
 
+import br.com.alura.AluraFake.task.Choice;
+import br.com.alura.AluraFake.task.Task;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -19,6 +21,10 @@ public class Option {
     public Option(String option, Boolean isCorrect) {
         this.option = option;
         this.isCorrect = isCorrect;
+    }
+
+    public Choice toEntity(Task task) {
+        return new Choice(this.option, this.isCorrect, task);
     }
 
     public String getOption() {
