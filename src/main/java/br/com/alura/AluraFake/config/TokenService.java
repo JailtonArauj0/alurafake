@@ -1,6 +1,6 @@
-package br.com.alura.AluraFake.security;
+package br.com.alura.AluraFake.config;
 
-import br.com.alura.AluraFake.user.User;
+import br.com.alura.AluraFake.domain.model.user.User;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;

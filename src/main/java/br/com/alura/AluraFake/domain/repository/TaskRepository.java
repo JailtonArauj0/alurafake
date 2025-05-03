@@ -1,7 +1,7 @@
-package br.com.alura.AluraFake.repositories;
+package br.com.alura.AluraFake.domain.repository;
 
-import br.com.alura.AluraFake.course.Course;
-import br.com.alura.AluraFake.task.Task;
+import br.com.alura.AluraFake.domain.model.course.Course;
+import br.com.alura.AluraFake.domain.model.task.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

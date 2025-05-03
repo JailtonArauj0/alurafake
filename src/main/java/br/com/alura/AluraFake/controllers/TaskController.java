@@ -2,7 +2,7 @@ package br.com.alura.AluraFake.controllers;
 
 import br.com.alura.AluraFake.dtos.request.ChoiceDTO;
 import br.com.alura.AluraFake.dtos.request.OpenTextDTO;
-import br.com.alura.AluraFake.services.TaskService;
+import br.com.alura.AluraFake.domain.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

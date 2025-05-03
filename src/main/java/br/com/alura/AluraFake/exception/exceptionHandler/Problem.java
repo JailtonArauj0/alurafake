@@ -1,4 +1,4 @@
-package br.com.alura.AluraFake.exceptionHandler;
+package br.com.alura.AluraFake.exception.exceptionHandler;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

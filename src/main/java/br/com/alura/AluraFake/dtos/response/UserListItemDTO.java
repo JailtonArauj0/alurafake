@@ -1,7 +1,7 @@
 package br.com.alura.AluraFake.dtos.response;
 
-import br.com.alura.AluraFake.user.Role;
-import br.com.alura.AluraFake.user.User;
+import br.com.alura.AluraFake.domain.model.user.Role;
+import br.com.alura.AluraFake.domain.model.user.User;
 
 import java.io.Serializable;
 

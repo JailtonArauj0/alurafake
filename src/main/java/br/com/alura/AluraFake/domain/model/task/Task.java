@@ -1,6 +1,6 @@
-package br.com.alura.AluraFake.task;
+package br.com.alura.AluraFake.domain.model.task;
 
-import br.com.alura.AluraFake.course.Course;
+import br.com.alura.AluraFake.domain.model.course.Course;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

@@ -1,10 +1,10 @@
-package br.com.alura.AluraFake.services;
+package br.com.alura.AluraFake.domain.service;
 
 import br.com.alura.AluraFake.dtos.request.NewUserDTO;
 import br.com.alura.AluraFake.dtos.response.UserListItemDTO;
 import br.com.alura.AluraFake.exception.CustomException;
-import br.com.alura.AluraFake.repositories.UserRepository;
-import br.com.alura.AluraFake.user.User;
+import br.com.alura.AluraFake.domain.repository.UserRepository;
+import br.com.alura.AluraFake.domain.model.user.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 

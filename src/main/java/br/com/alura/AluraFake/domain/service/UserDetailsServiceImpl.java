@@ -1,7 +1,7 @@
-package br.com.alura.AluraFake.services;
+package br.com.alura.AluraFake.domain.service;
 
 import br.com.alura.AluraFake.exception.EntityNotFoundException;
-import br.com.alura.AluraFake.repositories.UserRepository;
+import br.com.alura.AluraFake.domain.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

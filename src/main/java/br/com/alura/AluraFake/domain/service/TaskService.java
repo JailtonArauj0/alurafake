@@ -1,15 +1,15 @@
-package br.com.alura.AluraFake.services;
+package br.com.alura.AluraFake.domain.service;
 
-import br.com.alura.AluraFake.course.Course;
+import br.com.alura.AluraFake.domain.model.course.Course;
 import br.com.alura.AluraFake.dtos.request.ChoiceDTO;
 import br.com.alura.AluraFake.dtos.request.OpenTextDTO;
 import br.com.alura.AluraFake.dtos.request.Option;
 import br.com.alura.AluraFake.exception.CustomException;
-import br.com.alura.AluraFake.repositories.ChoiceRepository;
-import br.com.alura.AluraFake.repositories.CourseRepository;
-import br.com.alura.AluraFake.repositories.TaskRepository;
-import br.com.alura.AluraFake.task.Task;
-import br.com.alura.AluraFake.task.Type;
+import br.com.alura.AluraFake.domain.repository.ChoiceRepository;
+import br.com.alura.AluraFake.domain.repository.CourseRepository;
+import br.com.alura.AluraFake.domain.repository.TaskRepository;
+import br.com.alura.AluraFake.domain.model.task.Task;
+import br.com.alura.AluraFake.domain.model.task.Type;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

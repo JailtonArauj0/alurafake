@@ -1,4 +1,4 @@
-package br.com.alura.AluraFake.user;
+package br.com.alura.AluraFake.domain.model.user;
 
 import br.com.alura.AluraFake.util.PasswordGeneration;
 import jakarta.persistence.*;

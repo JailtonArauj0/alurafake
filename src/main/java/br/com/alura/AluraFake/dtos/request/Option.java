@@ -1,7 +1,7 @@
 package br.com.alura.AluraFake.dtos.request;
 
-import br.com.alura.AluraFake.task.Choice;
-import br.com.alura.AluraFake.task.Task;
+import br.com.alura.AluraFake.domain.model.task.Choice;
+import br.com.alura.AluraFake.domain.model.task.Task;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 

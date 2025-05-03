@@ -1,4 +1,4 @@
-package br.com.alura.AluraFake.exceptionHandler;
+package br.com.alura.AluraFake.exception.exceptionHandler;
 
 import br.com.alura.AluraFake.exception.CustomException;
 import br.com.alura.AluraFake.exception.EntityNotFoundException;

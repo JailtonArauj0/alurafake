@@ -1,7 +1,7 @@
 package br.com.alura.AluraFake.dtos.response;
 
-import br.com.alura.AluraFake.course.Course;
-import br.com.alura.AluraFake.course.Status;
+import br.com.alura.AluraFake.domain.model.course.Course;
+import br.com.alura.AluraFake.domain.model.course.Status;
 
 import java.io.Serializable;
 

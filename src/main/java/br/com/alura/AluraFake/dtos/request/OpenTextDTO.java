@@ -1,8 +1,8 @@
 package br.com.alura.AluraFake.dtos.request;
 
-import br.com.alura.AluraFake.course.Course;
-import br.com.alura.AluraFake.task.Task;
-import br.com.alura.AluraFake.task.Type;
+import br.com.alura.AluraFake.domain.model.course.Course;
+import br.com.alura.AluraFake.domain.model.task.Task;
+import br.com.alura.AluraFake.domain.model.task.Type;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
