@@ -28,6 +28,7 @@ public class TaskService {
         this.choiceRepository = choiceRepository;
     }
 
+    // MANTIVE AS VALIDAÇÕES AQUI, DEVIDO A LÓGICA SER ESPECÍFICA DESTE SERVICE
     private void validateAndSaveOrder(Course course, Integer order) {
         List<Task> existingTasks = taskRepository.findAllByCourseIdOrderByTaskOrder(course);
         if (order > existingTasks.size() + 1) {
@@ -48,6 +49,19 @@ public class TaskService {
                 .ifPresent(task -> {
                     throw new CustomException("Task with this statement already exists");
                 });
+    }
+
+    private void validadeOptionsSize(List<Option> options, Type type) {
+        if (type == Type.SINGLE_CHOICE) {
+            if (options.size() < 2 || options.size() > 5) {
+                throw new CustomException("The number of options must be between 2 and 5");
+            }
+
+        } else {
+            if (options.size() < 3 || options.size() > 5) {
+                throw new CustomException("The number of options must be between 3 and 5");
+            }
+        }
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -71,10 +85,7 @@ public class TaskService {
     @Transactional(rollbackFor = Exception.class)
     public void saveSingleChoice(@Valid ChoiceDTO choiceDTO) {
         List<Option> options = choiceDTO.getOptions();
-
-        if( options.size() < 2 || options.size() > 5) {
-            throw new CustomException("The number of options must be between 2 and 5");
-        }
+        validadeOptionsSize(options, Type.SINGLE_CHOICE);
 
         for (int i = 0; i < options.size(); i++) {
             String actualOption = options.get(i).getOption();
@@ -112,10 +123,7 @@ public class TaskService {
     @Transactional(rollbackFor = Exception.class)
     public void saveMultipleChoice(@Valid ChoiceDTO choiceDTO) {
         List<Option> options = choiceDTO.getOptions();
-
-        if( options.size() < 3 || options.size() > 5) {
-            throw new CustomException("The number of options must be between 3 and 5");
-        }
+        validadeOptionsSize(options, Type.MULTIPLE_CHOICE);
 
         for (int i = 0; i < options.size(); i++) {
             String actualOption = options.get(i).getOption();
