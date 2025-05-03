@@ -101,8 +101,8 @@ public class TaskService {
         validateUniqueOptions(options);
 
         for (int i = 0; i < options.size(); i++) {
-            if (options.stream().filter(option -> option.isCorrect().equals(Boolean.TRUE)).count() > 1) {
-                throw new CustomException("Duplicate correct answers are not allowed");
+            if (options.stream().filter(Option::isCorrect).count() != 1) {
+                throw new CustomException("Must have exactly 1 correct answer");
             }
             if (options.stream().anyMatch(option -> option.getOption().equals(choiceDTO.getStatement()))) {
                 throw new CustomException("The option cannot be the same as the statement");
@@ -134,7 +134,7 @@ public class TaskService {
         validateUniqueOptions(options);
 
         for (int i = 0; i < options.size(); i++) {
-            if (options.stream().filter(option -> option.isCorrect().equals(Boolean.TRUE)).count() < 2 ||
+            if (options.stream().filter(Option::isCorrect).count() < 2 ||
                     options.stream().noneMatch(option -> option.isCorrect().equals(Boolean.FALSE))) {
                 throw new CustomException("At least two correct answers are required, and one incorrect answer is required");
             }
