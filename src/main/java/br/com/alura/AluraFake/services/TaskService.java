@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
@@ -64,6 +66,15 @@ public class TaskService {
         }
     }
 
+    private void validateUniqueOptions(List<Option> options) {
+        Set<String> uniqueOptions = options.stream()
+                .map(Option::getOption)
+                .collect(Collectors.toSet());
+        if (uniqueOptions.size() != options.size()) {
+            throw new CustomException("Duplicate options are not allowed");
+        }
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public void saveOpenText(OpenTextDTO openTextDTO) {
         validateStatement(openTextDTO.getStatement());
@@ -85,14 +96,11 @@ public class TaskService {
     @Transactional(rollbackFor = Exception.class)
     public void saveSingleChoice(@Valid ChoiceDTO choiceDTO) {
         List<Option> options = choiceDTO.getOptions();
+        validateStatement(choiceDTO.getStatement());
         validadeOptionsSize(options, Type.SINGLE_CHOICE);
+        validateUniqueOptions(options);
 
         for (int i = 0; i < options.size(); i++) {
-            String actualOption = options.get(i).getOption();
-
-            if (options.stream().filter(option -> option.getOption().equals(actualOption)).count() > 1) {
-                throw new CustomException("Duplicate options are not allowed");
-            }
             if (options.stream().filter(option -> option.isCorrect().equals(Boolean.TRUE)).count() > 1) {
                 throw new CustomException("Duplicate correct answers are not allowed");
             }
@@ -100,8 +108,6 @@ public class TaskService {
                 throw new CustomException("The option cannot be the same as the statement");
             }
         }
-
-        validateStatement(choiceDTO.getStatement());
 
         courseRepository.findById(choiceDTO.getCourseId())
                 .ifPresentOrElse(course -> {
@@ -123,14 +129,11 @@ public class TaskService {
     @Transactional(rollbackFor = Exception.class)
     public void saveMultipleChoice(@Valid ChoiceDTO choiceDTO) {
         List<Option> options = choiceDTO.getOptions();
+        validateStatement(choiceDTO.getStatement());
         validadeOptionsSize(options, Type.MULTIPLE_CHOICE);
+        validateUniqueOptions(options);
 
         for (int i = 0; i < options.size(); i++) {
-            String actualOption = options.get(i).getOption();
-
-            if (options.stream().filter(option -> option.getOption().equals(actualOption)).count() > 1) {
-                throw new CustomException("Duplicate options are not allowed");
-            }
             if (options.stream().filter(option -> option.isCorrect().equals(Boolean.TRUE)).count() < 2 ||
                     options.stream().noneMatch(option -> option.isCorrect().equals(Boolean.FALSE))) {
                 throw new CustomException("At least two correct answers are required, and one incorrect answer is required");
@@ -139,8 +142,6 @@ public class TaskService {
                 throw new CustomException("The option cannot be the same as the statement");
             }
         }
-
-        validateStatement(choiceDTO.getStatement());
 
         courseRepository.findById(choiceDTO.getCourseId())
                 .ifPresentOrElse(course -> {
