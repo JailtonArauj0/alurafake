@@ -2,19 +2,20 @@ package br.com.alura.AluraFake.controllers;
 
 import br.com.alura.AluraFake.domain.model.course.Course;
 import br.com.alura.AluraFake.domain.model.user.User;
-import br.com.alura.AluraFake.dtos.response.CourseListItemDTO;
 import br.com.alura.AluraFake.domain.repository.CourseRepository;
-import br.com.alura.AluraFake.dtos.request.NewCourseDTO;
 import br.com.alura.AluraFake.domain.repository.UserRepository;
-import br.com.alura.AluraFake.user.*;
+import br.com.alura.AluraFake.dtos.request.NewCourseDTO;
+import br.com.alura.AluraFake.dtos.response.CourseListItemDTO;
 import br.com.alura.AluraFake.util.ErrorItemDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class CourseController {
