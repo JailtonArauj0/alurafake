@@ -1,12 +1,10 @@
 package br.com.alura.AluraFake.infra;
 
-import br.com.alura.AluraFake.course.*;
 import br.com.alura.AluraFake.domain.model.course.Course;
 import br.com.alura.AluraFake.domain.model.user.Role;
 import br.com.alura.AluraFake.domain.model.user.User;
 import br.com.alura.AluraFake.domain.repository.CourseRepository;
 import br.com.alura.AluraFake.domain.repository.UserRepository;
-import br.com.alura.AluraFake.user.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
