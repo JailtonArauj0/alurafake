@@ -27,7 +27,7 @@ public class TokenService {
                     .sign(algorithm);
             return token;
         } catch (JWTCreationException exception) {
-            throw new RuntimeException("Erro na geração do token", exception);
+            throw new RuntimeException("Error generating token", exception);
         }
     }
 
@@ -44,7 +44,7 @@ public class TokenService {
                     .verify(token)
                     .getSubject();
         } catch (JWTVerificationException exception) {
-            return "Token inválido ou expirado";
+            return "Invalid token or expired";
         }
     }
 }

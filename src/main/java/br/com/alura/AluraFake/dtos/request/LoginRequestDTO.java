@@ -5,9 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import java.util.Objects;
 
 public class LoginRequestDTO {
-    @NotBlank(message = "O Email não deve ser nulo")
+    @NotBlank(message = "Email cannot be null")
     private String email;
-    @NotBlank(message = "A senha não deve ser nula")
+    @NotBlank(message = "Password cannot be null")
     private String password;
 
     public LoginRequestDTO(String email, String password) {

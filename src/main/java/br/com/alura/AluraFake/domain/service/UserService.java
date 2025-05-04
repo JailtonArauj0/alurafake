@@ -22,7 +22,7 @@ public class UserService {
     @Transactional(rollbackFor = Exception.class)
     public void saveUser(NewUserDTO newUser) {
         if(userRepository.existsByEmail(newUser.getEmail())) {
-            throw new CustomException("Email já cadastrado no sistema");
+            throw new CustomException("This email is already registered");
         }
         newUser.setPassword(new BCryptPasswordEncoder().encode(newUser.getPassword()));
         User user = newUser.toModel();
