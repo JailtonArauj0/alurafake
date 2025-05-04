@@ -4,7 +4,6 @@ import br.com.alura.AluraFake.domain.model.course.Course;
 import br.com.alura.AluraFake.domain.model.task.Choice;
 import br.com.alura.AluraFake.domain.model.task.Task;
 import br.com.alura.AluraFake.domain.model.task.Type;
-import br.com.alura.AluraFake.domain.repository.ChoiceRepository;
 import br.com.alura.AluraFake.domain.repository.CourseRepository;
 import br.com.alura.AluraFake.domain.repository.TaskRepository;
 import br.com.alura.AluraFake.dtos.request.ChoiceDTO;
@@ -15,6 +14,7 @@ import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,12 +25,10 @@ import static br.com.alura.AluraFake.domain.model.task.Type.*;
 public class TaskService {
     private final TaskRepository taskRepository;
     private final CourseRepository courseRepository;
-    private final ChoiceRepository choiceRepository;
 
-    public TaskService(TaskRepository taskRepository, CourseRepository courseRepository, ChoiceRepository choiceRepository) {
+    public TaskService(TaskRepository taskRepository, CourseRepository courseRepository) {
         this.taskRepository = taskRepository;
         this.courseRepository = courseRepository;
-        this.choiceRepository = choiceRepository;
     }
 
     // MANTIVE AS VALIDAÇÕES AQUI, DEVIDO A LÓGICA SER ESPECÍFICA DESTE SERVICE
@@ -116,10 +114,13 @@ public class TaskService {
 
         Course course = validateCourseAndStatus(choiceDTO.getCourseId(), choiceDTO.getOrder());
 
-        Task savedTask = taskRepository.save(choiceDTO.toEntity(course, SINGLE_CHOICE));
+        Task task = choiceDTO.toEntity(course, SINGLE_CHOICE);
+        Task savedTask = taskRepository.save(task);
 
-        var choices = options.stream().map(option -> option.toEntity(savedTask)).toList();
-        choiceRepository.saveAll(choices);
+        List<Choice> choices = options.stream().map(option -> option.toEntity(savedTask)).collect(Collectors.toCollection(ArrayList::new));
+
+        savedTask.setChoices(choices);
+        taskRepository.save(savedTask);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -141,9 +142,12 @@ public class TaskService {
 
         Course course = validateCourseAndStatus(choiceDTO.getCourseId(), choiceDTO.getOrder());
 
-        Task savedTask = taskRepository.save(choiceDTO.toEntity(course, MULTIPLE_CHOICE));
+        Task task = choiceDTO.toEntity(course, MULTIPLE_CHOICE);
+        Task savedTask = taskRepository.save(task);
 
-        List<Choice> choices = options.stream().map(option -> option.toEntity(savedTask)).toList();
-        choiceRepository.saveAll(choices);
+        List<Choice> choices = options.stream().map(option -> option.toEntity(savedTask)).collect(Collectors.toCollection(ArrayList::new));
+
+        savedTask.setChoices(choices);
+        taskRepository.save(savedTask);
     }
 }
