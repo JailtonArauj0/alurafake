@@ -1,15 +1,16 @@
 package br.com.alura.AluraFake.domain.service;
 
 import br.com.alura.AluraFake.domain.model.course.Course;
+import br.com.alura.AluraFake.domain.model.task.Choice;
+import br.com.alura.AluraFake.domain.model.task.Task;
+import br.com.alura.AluraFake.domain.model.task.Type;
+import br.com.alura.AluraFake.domain.repository.ChoiceRepository;
+import br.com.alura.AluraFake.domain.repository.CourseRepository;
+import br.com.alura.AluraFake.domain.repository.TaskRepository;
 import br.com.alura.AluraFake.dtos.request.ChoiceDTO;
 import br.com.alura.AluraFake.dtos.request.OpenTextDTO;
 import br.com.alura.AluraFake.dtos.request.Option;
 import br.com.alura.AluraFake.exception.CustomException;
-import br.com.alura.AluraFake.domain.repository.ChoiceRepository;
-import br.com.alura.AluraFake.domain.repository.CourseRepository;
-import br.com.alura.AluraFake.domain.repository.TaskRepository;
-import br.com.alura.AluraFake.domain.model.task.Task;
-import br.com.alura.AluraFake.domain.model.task.Type;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static br.com.alura.AluraFake.domain.model.task.Type.*;
 
 @Service
 public class TaskService {
@@ -54,7 +57,7 @@ public class TaskService {
     }
 
     private void validadeOptionsSize(List<Option> options, Type type) {
-        if (type == Type.SINGLE_CHOICE) {
+        if (type == SINGLE_CHOICE) {
             if (options.size() < 2 || options.size() > 5) {
                 throw new CustomException("The number of options must be between 2 and 5");
             }
@@ -75,29 +78,31 @@ public class TaskService {
         }
     }
 
+    private Course validateCourseAndStatus(Long courseId, Integer order) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new CustomException("Course not found"));
+
+        if (!course.getStatus().name().equals("BUILDING")) {
+            throw new CustomException("Course is not in BUILDING status");
+        }
+
+        validateAndSaveOrder(course, order);
+        return course;
+    }
+
     @Transactional(rollbackFor = Exception.class)
     public void saveOpenText(OpenTextDTO openTextDTO) {
         validateStatement(openTextDTO.getStatement());
+        Course course = validateCourseAndStatus(openTextDTO.getCourseId(), openTextDTO.getOrder());
 
-        courseRepository.findById(openTextDTO.getCourseId())
-                .ifPresentOrElse(course -> {
-                            if (!course.getStatus().name().equals("BUILDING")) {
-                                throw new CustomException("Course is not in BUILDING status");
-                            }
-                            validateAndSaveOrder(course, openTextDTO.getOrder());
-                            taskRepository.save(openTextDTO.toEntity(course, Type.OPEN_TEXT));
-                        },
-                        () -> {
-                            throw new CustomException("Course not found");
-                        }
-                );
+        taskRepository.save(openTextDTO.toEntity(course, OPEN_TEXT));
     }
 
     @Transactional(rollbackFor = Exception.class)
     public void saveSingleChoice(@Valid ChoiceDTO choiceDTO) {
         List<Option> options = choiceDTO.getOptions();
         validateStatement(choiceDTO.getStatement());
-        validadeOptionsSize(options, Type.SINGLE_CHOICE);
+        validadeOptionsSize(options, SINGLE_CHOICE);
         validateUniqueOptions(options);
 
         for (int i = 0; i < options.size(); i++) {
@@ -109,21 +114,12 @@ public class TaskService {
             }
         }
 
-        courseRepository.findById(choiceDTO.getCourseId())
-                .ifPresentOrElse(course -> {
-                    if(!course.getStatus().name().equals("BUILDING")) {
-                        throw new CustomException("Course is not in BUILDING status");
-                    }
-                    validateAndSaveOrder(course, choiceDTO.getOrder());
-                    Task savedTask = taskRepository.save(choiceDTO.toEntity(course, Type.SINGLE_CHOICE));
+        Course course = validateCourseAndStatus(choiceDTO.getCourseId(), choiceDTO.getOrder());
 
-                    var choices = options.stream().map(option -> option.toEntity(savedTask)).toList();
-                    choiceRepository.saveAll(choices);
-                },
-                    () -> {
-                        throw new CustomException("Course not found");
-                    }
-                );
+        Task savedTask = taskRepository.save(choiceDTO.toEntity(course, SINGLE_CHOICE));
+
+        var choices = options.stream().map(option -> option.toEntity(savedTask)).toList();
+        choiceRepository.saveAll(choices);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -143,20 +139,11 @@ public class TaskService {
             }
         }
 
-        courseRepository.findById(choiceDTO.getCourseId())
-                .ifPresentOrElse(course -> {
-                    if(!course.getStatus().name().equals("BUILDING")) {
-                        throw new CustomException("Course is not in BUILDING status");
-                    }
-                    validateAndSaveOrder(course, choiceDTO.getOrder());
-                    Task savedTask = taskRepository.save(choiceDTO.toEntity(course, Type.MULTIPLE_CHOICE));
+        Course course = validateCourseAndStatus(choiceDTO.getCourseId(), choiceDTO.getOrder());
 
-                    var choices = options.stream().map(option -> option.toEntity(savedTask)).toList();
-                    choiceRepository.saveAll(choices);
-                },
-                    () -> {
-                        throw new CustomException("Course not found");
-                    }
-                );
+        Task savedTask = taskRepository.save(choiceDTO.toEntity(course, MULTIPLE_CHOICE));
+
+        List<Choice> choices = options.stream().map(option -> option.toEntity(savedTask)).toList();
+        choiceRepository.saveAll(choices);
     }
 }
