@@ -33,8 +33,6 @@ public class UserController {
         this.tokenService = tokenService;
     }
 
-
-    @Transactional
     @PostMapping("/user/new")
     public ResponseEntity newUser(@RequestBody @Valid NewUserDTO newUser) {
         userService.saveUser(newUser);
