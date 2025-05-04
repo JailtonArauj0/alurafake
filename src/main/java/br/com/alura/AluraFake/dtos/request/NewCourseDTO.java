@@ -1,5 +1,7 @@
 package br.com.alura.AluraFake.dtos.request;
 
+import br.com.alura.AluraFake.domain.model.course.Course;
+import br.com.alura.AluraFake.domain.model.user.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,12 +16,13 @@ public class NewCourseDTO {
     @NotBlank
     @Length(min = 4, max = 255)
     private String description;
-    @NotNull
-    @NotBlank
-    @Email
     private String emailInstructor;
 
     public NewCourseDTO() {}
+
+    public Course toEntity(User instructor) {
+        return new Course(this.title, this.description, instructor);
+    }
 
     public String getTitle() {
         return title;
