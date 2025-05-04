@@ -3,12 +3,16 @@ package br.com.alura.AluraFake.domain.service;
 import br.com.alura.AluraFake.domain.model.course.Course;
 import br.com.alura.AluraFake.domain.model.course.Status;
 import br.com.alura.AluraFake.domain.model.task.Task;
+import br.com.alura.AluraFake.domain.model.user.User;
 import br.com.alura.AluraFake.domain.repository.CourseRepository;
 import br.com.alura.AluraFake.domain.repository.TaskRepository;
+import br.com.alura.AluraFake.domain.repository.UserRepository;
+import br.com.alura.AluraFake.dtos.request.NewCourseDTO;
 import br.com.alura.AluraFake.dtos.response.CourseListItemDTO;
 import br.com.alura.AluraFake.exception.CustomException;
 import br.com.alura.AluraFake.exception.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -19,10 +23,12 @@ import java.util.Optional;
 public class CourseService {
     private final CourseRepository courseRepository;
     private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
 
-    public CourseService(CourseRepository courseRepository, TaskRepository taskRepository) {
+    public CourseService(CourseRepository courseRepository, TaskRepository taskRepository, UserRepository userRepository) {
         this.courseRepository = courseRepository;
         this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
     }
 
     public List<CourseListItemDTO> listAllCourses() {
@@ -31,6 +37,7 @@ public class CourseService {
                 .toList();
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void publishCourse(Long id) {
         Optional<Course> hasCourse = courseRepository.findById(id);
 
@@ -50,6 +57,20 @@ public class CourseService {
                 throw new EntityNotFoundException("Course not found.");
             }
         );
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void createCourse(NewCourseDTO newCourse, String loggedUser) {
+        Optional<User> possibleAuthor = userRepository
+                .findByEmail(loggedUser)
+                .filter(User::isInstructor);
+
+        if(possibleAuthor.isEmpty()) {
+            throw new CustomException("The user is not an instructor.");
+        }
+
+        Course course = newCourse.toEntity(possibleAuthor.get());
+        courseRepository.save(course);
     }
 
     private void validateOrderAndComposition(List<Task> tasks) {

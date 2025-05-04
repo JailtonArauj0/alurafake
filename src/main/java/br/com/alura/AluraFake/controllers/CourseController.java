@@ -1,52 +1,28 @@
 package br.com.alura.AluraFake.controllers;
 
-import br.com.alura.AluraFake.domain.model.course.Course;
-import br.com.alura.AluraFake.domain.model.user.User;
-import br.com.alura.AluraFake.domain.repository.CourseRepository;
-import br.com.alura.AluraFake.domain.repository.UserRepository;
 import br.com.alura.AluraFake.domain.service.CourseService;
 import br.com.alura.AluraFake.dtos.request.NewCourseDTO;
 import br.com.alura.AluraFake.dtos.response.CourseListItemDTO;
-import br.com.alura.AluraFake.util.ErrorItemDTO;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class CourseController {
     private final CourseService courseService;
-    private final CourseRepository courseRepository;
-    private final UserRepository userRepository;
 
-    public CourseController(CourseService courseService, CourseRepository courseRepository, UserRepository userRepository){
+    public CourseController(CourseService courseService) {
         this.courseService = courseService;
-        this.courseRepository = courseRepository;
-        this.userRepository = userRepository;
     }
 
-    @Transactional
     @PostMapping("/course/new")
     public ResponseEntity createCourse(@Valid @RequestBody NewCourseDTO newCourse) {
-
-        //Caso implemente o bonus, pegue o instrutor logado
-        Optional<User> possibleAuthor = userRepository
-                .findByEmail(newCourse.getEmailInstructor())
-                .filter(User::isInstructor);
-
-        if(possibleAuthor.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new ErrorItemDTO("emailInstructor", "Usuário não é um instrutor"));
-        }
-
-        Course course = new Course(newCourse.getTitle(), newCourse.getDescription(), possibleAuthor.get());
-
-        courseRepository.save(course);
+        String loggedUser = SecurityContextHolder.getContext().getAuthentication().getName();
+        courseService.createCourse(newCourse, loggedUser);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
