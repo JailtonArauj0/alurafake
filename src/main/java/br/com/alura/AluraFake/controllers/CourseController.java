@@ -58,6 +58,7 @@ public class CourseController {
 
     @PostMapping("/course/{id}/publish")
     public ResponseEntity publishCourse(@PathVariable("id") Long id) {
+        courseService.publishCourse(id);
         return ResponseEntity.ok().build();
     }
 
