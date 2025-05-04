@@ -2,6 +2,8 @@ package br.com.alura.AluraFake.domain.model.course;
 
 import br.com.alura.AluraFake.domain.model.user.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
@@ -13,13 +15,24 @@ public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Size(max = 50)
+    @NotNull
     private String title;
+
+    @Size(max = 255)
+    @NotNull
     private String description;
+
     @ManyToOne
+    @JoinColumn(name = "instructor_id")
     private User instructor;
+
     @Enumerated(EnumType.STRING)
     private Status status;
+
     private LocalDateTime publishedAt;
 
     @Deprecated
