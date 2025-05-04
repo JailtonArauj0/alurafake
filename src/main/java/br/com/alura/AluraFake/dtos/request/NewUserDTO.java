@@ -8,10 +8,10 @@ import org.hibernate.validator.constraints.Length;
 public class NewUserDTO {
 
     @NotNull
-    @Length(min = 3, max = 50, message = "O campo nome deve ter entre 3 e 50 caracteres")
+    @Length(min = 3, max = 50, message = "Name should be between 3 and 50 characters")
     private String name;
 
-    @NotBlank(message = "O campo email não pode ser vazio")
+    @NotBlank(message = "Email cannot be blank")
     @Email
     private String email;
 
@@ -19,7 +19,7 @@ public class NewUserDTO {
     private Role role;
 
     @NotNull
-    @Length(min = 6, max = 20, message = "A senha deve ter entre 6 e 20 caracteres")
+    @Length(min = 6, max = 20, message = "Password should be between 6 and 20 characters")
     private String password;
 
     public NewUserDTO() {}
