@@ -7,6 +7,7 @@ import br.com.alura.AluraFake.domain.repository.UserRepository;
 import br.com.alura.AluraFake.domain.model.user.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void saveUser(NewUserDTO newUser) {
         if(userRepository.existsByEmail(newUser.getEmail())) {
             throw new CustomException("Email já cadastrado no sistema");
