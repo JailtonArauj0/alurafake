@@ -6,6 +6,7 @@ import br.com.alura.AluraFake.dtos.response.CourseListItemDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ public class CourseController {
         this.courseService = courseService;
     }
 
+    @Secured({"ROLE_INSTRUCTOR"})
     @PostMapping("/course/new")
     public ResponseEntity createCourse(@Valid @RequestBody NewCourseDTO newCourse) {
         String loggedUser = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -32,6 +34,7 @@ public class CourseController {
         return ResponseEntity.ok(courses);
     }
 
+    @Secured({"ROLE_INSTRUCTOR"})
     @PostMapping("/course/{id}/publish")
     public ResponseEntity publishCourse(@PathVariable("id") Long id) {
         courseService.publishCourse(id);
