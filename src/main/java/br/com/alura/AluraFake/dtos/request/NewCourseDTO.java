@@ -20,6 +20,12 @@ public class NewCourseDTO {
 
     public NewCourseDTO() {}
 
+    public NewCourseDTO(String title, String description, String emailInstructor) {
+        this.title = title;
+        this.description = description;
+        this.emailInstructor = emailInstructor;
+    }
+
     public Course toEntity(User instructor) {
         return new Course(this.title, this.description, instructor);
     }
