@@ -9,7 +9,7 @@ import java.util.Locale;
 public class AluraFakeApplication {
 
 	public static void main(String[] args) {
-		// PADRONIZEI O LOCALE PARA INGLÊS DEVIDO A MENSAGENS DE TRATAMENTO DE ERRO PADRÃO DO SPRING
+		// DEFINI O LOCALE PARA INGLÊS PARA PADRONIZAR AS MENSAGENS DE TRATAMENTO PADRÃO DO SPRING
 		Locale.setDefault(Locale.ENGLISH);
 		SpringApplication.run(AluraFakeApplication.class, args);
 	}
