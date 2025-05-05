@@ -2,6 +2,7 @@ package br.com.alura.AluraFake.dtos.request;
 
 import br.com.alura.AluraFake.domain.model.task.Choice;
 import br.com.alura.AluraFake.domain.model.task.Task;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -35,10 +36,12 @@ public class Option {
         this.option = option;
     }
 
+    @JsonProperty("isCorrect")
     public Boolean isCorrect() {
         return isCorrect;
     }
 
+    @JsonProperty("isCorrect")
     public void setIsCorrect(Boolean correct) {
         isCorrect = correct;
     }
